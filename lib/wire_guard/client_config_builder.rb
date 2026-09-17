@@ -12,14 +12,6 @@ module WireGuard
     CONNECTING_CLIENT_LIMIT_6 = Settings.connecting_client_limit_6.to_i
     WG_ALLOWED_IPS = Settings.wg_allowed_ips
 
-    # A base64-encoded 32 byte X25519 key: 42 free characters, a 43rd whose two
-    # low bits are zero, and one padding character.
-    #
-    # NOTE: \A and \z rather than ^ and $ on purpose. The public key is written
-    # verbatim into wg0.conf, and line anchors would let a key containing a
-    # newline smuggle extra directives into that file.
-    PUBLIC_KEY_FORMAT = %r{\A[A-Za-z0-9+/]{42}[AEIMQUYcgkosw048]=\z}
-
     attr_reader :config
 
     def self.available_addresses_count
@@ -54,8 +46,7 @@ module WireGuard
     end
 
     def validate_public_key!
-      public_key = params['public_key']
-      return if public_key.is_a?(String) && public_key.match?(PUBLIC_KEY_FORMAT)
+      return if KeyGenerator.valid_key?(params['public_key'])
 
       raise Errors::InvalidPublicKeyError
     end

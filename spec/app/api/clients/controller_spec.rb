@@ -313,9 +313,9 @@ RSpec.describe Api::Clients::Controller do
           {
             'address' => '10.8.0.200',
             'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-            'private_key' => 'a',
-            'public_key' => 'b',
-            'preshared_key' => 'c',
+            'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+            'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
+            'preshared_key' => '2H4hdH3iwrGVNMmLKH+VsBe/QsC1TblG+mukcwOLimA=',
             'enable' => false,
             'data' => {}
           }
@@ -334,9 +334,9 @@ RSpec.describe Api::Clients::Controller do
                 'id' => 1,
                 'address' => '10.8.0.200',
                 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-                'private_key' => 'a',
-                'public_key' => 'b',
-                'preshared_key' => 'c',
+                'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+                'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
+                'preshared_key' => '2H4hdH3iwrGVNMmLKH+VsBe/QsC1TblG+mukcwOLimA=',
                 'enable' => false,
                 'data' => {}
               },
@@ -373,9 +373,9 @@ RSpec.describe Api::Clients::Controller do
             server_public_key: 'uygGKpQt7gOwrP+bqkiXytafHiM+XqFGc0jtZVJ5bnw=',
             address: '10.8.0.200/29',
             address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:17/120',
-            private_key: 'a',
-            public_key: 'b',
-            preshared_key: 'c',
+            private_key: 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+            public_key: '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
+            preshared_key: '2H4hdH3iwrGVNMmLKH+VsBe/QsC1TblG+mukcwOLimA=',
             enable: false,
             allowed_ips: '0.0.0.0/0, ::/0',
             dns: '1.1.1.1',
@@ -406,9 +406,9 @@ RSpec.describe Api::Clients::Controller do
           {
             'address' => '10.8.0.200',
             'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-            'private_key' => 'a',
+            'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
             'public_key' => 1,
-            'preshared_key' => 'c',
+            'preshared_key' => '2H4hdH3iwrGVNMmLKH+VsBe/QsC1TblG+mukcwOLimA=',
             'enable' => 'false',
             'data' => {}
           }

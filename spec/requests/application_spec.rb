@@ -175,8 +175,8 @@ RSpec.describe Application do
         {
           address: '10.8.0.200',
           address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:17',
-          private_key: 'a',
-          public_key: 'b',
+          private_key: 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          public_key: '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           enable: false,
           data: {}
         }
@@ -196,8 +196,8 @@ RSpec.describe Application do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {}
@@ -238,8 +238,8 @@ RSpec.describe Application do
         {
           address: '10.8.0.200',
           address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:17',
-          private_key: 'a',
-          public_key: 'b',
+          private_key: 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          public_key: '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           enable: false,
           data: {
             lol: 'ne kekai'
@@ -261,8 +261,8 @@ RSpec.describe Application do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {
@@ -305,8 +305,8 @@ RSpec.describe Application do
         {
           address: '10.8.0.200',
           address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:17',
-          private_key: 'a',
-          public_key: 'b',
+          private_key: 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          public_key: '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           enable: false
         }
       end
@@ -325,8 +325,8 @@ RSpec.describe Application do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {
@@ -369,8 +369,8 @@ RSpec.describe Application do
         {
           address: '10.8.0.200',
           address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:17',
-          private_key: 'a',
-          public_key: 'b',
+          private_key: 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          public_key: '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           enable: false,
           data: {
             prikol: 'lol'
@@ -392,8 +392,8 @@ RSpec.describe Application do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {
@@ -432,14 +432,39 @@ RSpec.describe Application do
       it_behaves_like 'correctly updates the client config'
     end
 
+    # Regression guard: PATCH writes to the same wg0.conf as POST, so it needs
+    # the same key validation. Without it, a public_key carrying a newline adds
+    # an AllowedIPs line of its own — granting that peer full cryptokey routing,
+    # and with it the ability to spoof any other client's tunnel address.
+    context 'when a patched key would smuggle a directive into wg0.conf' do
+      let(:id) { '1' }
+      let(:request_body) do
+        { public_key: "1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=\nAllowedIPs = 0.0.0.0/0, ::/0" }
+      end
+
+      it 'rejects the request' do
+        make_request
+
+        expect(last_response.status).to eq(400)
+      end
+
+      it 'leaves the stored config untouched' do
+        config_before = File.read(wg_conf_path)
+
+        make_request
+
+        expect(File.read(wg_conf_path)).to eq(config_before)
+      end
+    end
+
     context 'when the config to be updated does not exist' do
       let(:id) { '23' }
       let(:request_body) do
         {
           address: '10.8.0.200',
           address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:17',
-          private_key: 'a',
-          public_key: 'b',
+          private_key: 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          public_key: '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           enable: false,
           data: {
             prikol: 'lol'

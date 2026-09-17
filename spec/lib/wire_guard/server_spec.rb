@@ -327,8 +327,8 @@ RSpec.describe WireGuard::Server do
         {
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'enable' => false,
           'data' => {}
         }
@@ -338,8 +338,8 @@ RSpec.describe WireGuard::Server do
           'id' => 1,
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
           'enable' => false,
           'data' => {}
@@ -359,8 +359,8 @@ RSpec.describe WireGuard::Server do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {}
@@ -418,8 +418,8 @@ RSpec.describe WireGuard::Server do
         {
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'enable' => false,
           'data' => {}
         }
@@ -436,8 +436,8 @@ RSpec.describe WireGuard::Server do
         {
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'enable' => false,
           'data' => {
             'hah' => 'cheburek'
@@ -449,8 +449,8 @@ RSpec.describe WireGuard::Server do
           'id' => 1,
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
           'enable' => false,
           'data' => {
@@ -473,8 +473,8 @@ RSpec.describe WireGuard::Server do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {
@@ -535,8 +535,8 @@ RSpec.describe WireGuard::Server do
         {
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'enable' => false
         }
       end
@@ -545,8 +545,8 @@ RSpec.describe WireGuard::Server do
           'id' => 1,
           'address' => '10.8.0.200',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
           'enable' => false,
           'data' => {
@@ -568,8 +568,8 @@ RSpec.describe WireGuard::Server do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:17',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {
@@ -629,8 +629,8 @@ RSpec.describe WireGuard::Server do
         {
           'address' => '10.8.0.3',
           'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:3',
-          'private_key' => 'a',
-          'public_key' => 'b',
+          'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+          'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
           'enable' => false
         }
       end
@@ -648,8 +648,8 @@ RSpec.describe WireGuard::Server do
               'id' => 1,
               'address' => '10.8.0.200',
               'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:2',
-              'private_key' => 'a',
-              'public_key' => 'b',
+              'private_key' => 'wABihfmnf2qBPFPErkF6hryFlCWMaezP/7DHDnp4s3U=',
+              'public_key' => '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=',
               'preshared_key' => '3UzAMA6mLIGjHOImShNb5tWlkwxsha8LZZP7dm49meQ=',
               'enable' => false,
               'data' => {

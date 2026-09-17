@@ -18,6 +18,9 @@ module WireGuard
     WG_POST_UP = Settings.wg_post_up
     WG_POST_DOWN = Settings.wg_post_down
 
+    # The stored peer values that get interpolated into wg0.conf.
+    PEER_FIELDS = %w[public_key preshared_key address address_ipv6].freeze
+
     def initialize
       @json_config = JSON.parse(File.read(WireGuard::Server::WG_JSON_PATH))
       @first_start = !File.exist?(WG_CONF_PATH)
@@ -60,7 +63,15 @@ module WireGuard
       File.write(WG_CONF_PATH, new_config_build.join("\n"))
     end
 
+    # NOTE: Last line of defence. Every value below is interpolated into wg0.conf
+    # as-is, so one carrying a newline would add directives of its own — an extra
+    # AllowedIPs, or a whole second [Peer] block. Callers validate their input;
+    # this refuses to write the file at all rather than trust that they did.
     def build_client(config)
+      PEER_FIELDS.each do |field|
+        raise Errors::InvalidKeyMaterialError if config[field].to_s.match?(/[\r\n]/)
+      end
+
       <<~TEXT
         # Client ID: #{config['id']}
         [Peer]
