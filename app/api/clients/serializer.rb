@@ -52,13 +52,16 @@ module Api
         end
       end
 
+      # NOTE: private_key is only present for peers created before clients
+      # started supplying their own public key. It is omitted rather than
+      # serialized as null, so a response never carries the field at all for a
+      # client-generated peer.
       def client(config = client_config) # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
         {
           id: config['id'],
           server_public_key:,
           address: "#{config['address']}/#{CONNECTING_CLIENT_LIMIT}",
           address_ipv6: "#{config['address_ipv6']}/#{CONNECTING_CLIENT_LIMIT_6}",
-          private_key: config['private_key'],
           public_key: config['public_key'],
           preshared_key: config['preshared_key'],
           enable: config['enable'],
@@ -70,12 +73,20 @@ module Api
           last_online: find_stat_data(config['public_key'])['last_online'],
           traffic: find_stat_data(config['public_key'])['traffic'],
           data: config['data']
-        }
+        }.then { |client| legacy_private_key(config, client) }
       end
 
       private
 
       attr_reader :client_config, :server_public_key, :server_stat
+
+      def legacy_private_key(config, client)
+        private_key = config['private_key']
+
+        return client if private_key.nil? || private_key.empty?
+
+        client.merge(private_key:)
+      end
 
       def find_stat_data(public_key)
         stringify_keys(server_stat.wg_stat[public_key]) or {}

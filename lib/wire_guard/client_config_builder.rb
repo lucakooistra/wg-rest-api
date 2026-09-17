@@ -12,6 +12,14 @@ module WireGuard
     CONNECTING_CLIENT_LIMIT_6 = Settings.connecting_client_limit_6.to_i
     WG_ALLOWED_IPS = Settings.wg_allowed_ips
 
+    # A base64-encoded 32 byte X25519 key: 42 free characters, a 43rd whose two
+    # low bits are zero, and one padding character.
+    #
+    # NOTE: \A and \z rather than ^ and $ on purpose. The public key is written
+    # verbatim into wg0.conf, and line anchors would let a key containing a
+    # newline smuggle extra directives into that file.
+    PUBLIC_KEY_FORMAT = %r{\A[A-Za-z0-9+/]{42}[AEIMQUYcgkosw048]=\z}
+
     attr_reader :config
 
     def self.available_addresses_count
@@ -19,28 +27,37 @@ module WireGuard
     end
 
     def initialize(configs, params)
-      @wg_genkey = KeyGenerator.wg_genkey
       @configs = configs
+      @params = params || {}
+      validate_public_key!
       check_availability_of_space!
-      @config = build_config(params)
+      @config = build_config(@params)
     end
 
     private
 
-    attr_reader :wg_genkey, :configs
+    attr_reader :configs, :params
 
-    def build_config(params) # rubocop:disable Metrics/MethodLength
+    # NOTE: The client generates its own keypair and supplies only the public
+    # half, so no private key is generated, transmitted, or stored here.
+    def build_config(params)
       {
         id: configs['last_id'] + 1,
         address: new_last_ip,
         address_ipv6: new_last_ipv6,
-        private_key: wg_genkey,
-        public_key: KeyGenerator.wg_pubkey(wg_genkey),
+        public_key: params['public_key'],
         preshared_key: KeyGenerator.wg_genpsk,
         allowed_ips: WG_ALLOWED_IPS,
         enable: true,
-        data: params
+        data: params.except('public_key')
       }
+    end
+
+    def validate_public_key!
+      public_key = params['public_key']
+      return if public_key.is_a?(String) && public_key.match?(PUBLIC_KEY_FORMAT)
+
+      raise Errors::InvalidPublicKeyError
     end
 
     def new_last_ip

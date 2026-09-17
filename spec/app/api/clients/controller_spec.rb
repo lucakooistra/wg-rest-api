@@ -175,14 +175,17 @@ RSpec.describe Api::Clients::Controller do
   end
 
   describe '#create' do
+    let(:client_public_key) { '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=' }
+
+    let(:params) { { 'public_key' => client_public_key } }
+
     let(:expected_result) do
       {
         id: 1,
         server_public_key: 'wg_pubkey',
         address: '10.8.0.2/29',
         address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:2/120',
-        private_key: 'wg_genkey',
-        public_key: 'wg_pubkey',
+        public_key: client_public_key,
         preshared_key: 'wg_genpsk',
         enable: true,
         allowed_ips: '0.0.0.0/0, ::/0',
@@ -192,7 +195,7 @@ RSpec.describe Api::Clients::Controller do
         last_ip: nil,
         last_online: nil,
         traffic: nil,
-        data: nil
+        data: {}
       }
     end
 
@@ -210,23 +213,22 @@ RSpec.describe Api::Clients::Controller do
             id: 1,
             address: '10.8.0.2',
             address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:2',
-            private_key: 'wg_genkey',
-            public_key: 'wg_pubkey',
+            public_key: client_public_key,
             preshared_key: 'wg_genpsk',
             allowed_ips: '0.0.0.0/0, ::/0',
             enable: true,
-            data: nil
+            data: {}
           }
         }
       }
     end
 
     it 'return new config' do
-      expect(JSON.parse(controller.create(nil))).to eq(stringify_keys(expected_result))
+      expect(JSON.parse(controller.create(params))).to eq(stringify_keys(expected_result))
     end
 
     it 'creates a new config file in the server configuration file' do
-      controller.create(nil)
+      controller.create(params)
 
       json_config = File.read(wg_conf_path)
 

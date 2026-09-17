@@ -70,9 +70,12 @@ RSpec.describe WireGuard::Server do
       create_conf_file('spec/fixtures/empty_wg0.json')
     end
 
+    let(:client_public_key) { '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=' }
+
     let(:params) do
       {
-        lol: 'kek'
+        'public_key' => client_public_key,
+        'lol' => 'kek'
       }
     end
 
@@ -81,13 +84,12 @@ RSpec.describe WireGuard::Server do
         id: 1,
         address: '10.8.0.2',
         address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:2',
-        private_key: 'wg_genkey',
-        public_key: 'wg_pubkey',
+        public_key: client_public_key,
         preshared_key: 'wg_genpsk',
         allowed_ips: '0.0.0.0/0, ::/0',
         enable: true,
         data: {
-          lol: 'kek'
+          'lol' => 'kek'
         }
       }
     end
@@ -106,13 +108,12 @@ RSpec.describe WireGuard::Server do
             id: 1,
             address: '10.8.0.2',
             address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:2',
-            private_key: 'wg_genkey',
-            public_key: 'wg_pubkey',
+            public_key: client_public_key,
             preshared_key: 'wg_genpsk',
             allowed_ips: '0.0.0.0/0, ::/0',
             enable: true,
             data: {
-              lol: 'kek'
+              'lol' => 'kek'
             }
           }
         }

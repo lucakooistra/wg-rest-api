@@ -63,6 +63,8 @@ class Application < Sinatra::Base
       status 201
 
       controller.create(request_body)
+    rescue Errors::InvalidPublicKeyError => e
+      halt 400, { error: e.message }.to_json
     end
 
     get '/server' do

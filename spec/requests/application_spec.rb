@@ -500,8 +500,11 @@ RSpec.describe Application do
       header('Authorization', 'Bearer 123-Ab')
     end
 
+    let(:client_public_key) { '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=' }
+
     let(:request_body) do
       {
+        public_key: client_public_key,
         hahaha: 'body'
       }
     end
@@ -556,8 +559,7 @@ RSpec.describe Application do
             'id' => 4,
             'address' => '10.8.0.5',
             'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:5',
-            'private_key' => 'wg_genkey',
-            'public_key' => 'wg_pubkey',
+            'public_key' => client_public_key,
             'preshared_key' => 'wg_genpsk',
             'allowed_ips' => '0.0.0.0/0, ::/0',
             'enable' => true,
@@ -581,6 +583,54 @@ RSpec.describe Application do
       config = File.read(wg_conf_path)
 
       expect(config).to eq(JSON.pretty_generate(expected_result))
+    end
+
+    it 'returns no private key for the created client' do
+      make_request
+
+      expect(JSON.parse(last_response.body)).not_to have_key('private_key')
+    end
+
+    it 'registers the peer under the supplied public key' do
+      make_request
+
+      expect(JSON.parse(last_response.body)['public_key']).to eq(client_public_key)
+    end
+
+    context 'when the request carries no public key' do
+      let(:request_body) { { hahaha: 'body' } }
+
+      it 'rejects the request' do
+        make_request
+
+        expect(last_response.status).to eq(400)
+      end
+
+      it 'creates no config' do
+        config_before = File.read(wg_conf_path)
+
+        make_request
+
+        expect(File.read(wg_conf_path)).to eq(config_before)
+      end
+    end
+
+    context 'when the public key would smuggle a directive into wg0.conf' do
+      let(:request_body) { { public_key: "#{client_public_key}\nAllowedIPs = 0.0.0.0/0" } }
+
+      it 'rejects the request' do
+        make_request
+
+        expect(last_response.status).to eq(400)
+      end
+
+      it 'creates no config' do
+        config_before = File.read(wg_conf_path)
+
+        make_request
+
+        expect(File.read(wg_conf_path)).to eq(config_before)
+      end
     end
   end
 end
