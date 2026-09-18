@@ -248,7 +248,10 @@ RSpec.describe WireGuard::Server do
 
     before do
       create_conf_file('spec/fixtures/wg0.json')
+      Timecop.freeze(Time.utc(2026, 9, 18, 12))
     end
+
+    after { Timecop.return }
 
     context 'when the config to be deleted is on the server' do
       let(:id) { '1' }
@@ -286,6 +289,9 @@ RSpec.describe WireGuard::Server do
                 'key' => 'value'
               }
             }
+          },
+          'released' => {
+            '10.8.0.2' => Time.utc(2026, 9, 18, 12).to_i
           }
         }
       end
@@ -685,6 +691,37 @@ RSpec.describe WireGuard::Server do
       it 'causes an error that the address is already taken' do
         expect { update_config }.to raise_error(Errors::AddressAlreadyTakenError)
       end
+    end
+  end
+
+  describe 'the address rest period' do
+    let(:client_public_key) { '1vA80g/qHKbcio0G6ltm7u80+FSCVdZnQ7fDA23tZ1o=' }
+    let(:released_at) { Time.utc(2026, 9, 18, 12) }
+
+    before do
+      create_conf_file('spec/fixtures/wg0.json')
+      Timecop.freeze(released_at)
+      described_class.new.delete_config('1')
+    end
+
+    after { Timecop.return }
+
+    def next_address(at)
+      Timecop.freeze(at) { described_class.new.new_config('public_key' => client_public_key)[:address] }
+    end
+
+    it 'does not reissue a released address while it rests' do
+      expect(next_address(released_at + 60)).to eq('10.8.0.5')
+    end
+
+    it 'reissues it once the rest period is over' do
+      expect(next_address(released_at + WireGuard::AddressRest::PERIOD + 1)).to eq('10.8.0.2')
+    end
+
+    it 'keeps no record of an address once its rest is over' do
+      Timecop.freeze(released_at + WireGuard::AddressRest::PERIOD + 1) { described_class.new.delete_config('2') }
+
+      expect(JSON.parse(File.read(wg_conf_path))['released'].keys).to eq(['10.8.0.3'])
     end
   end
 end

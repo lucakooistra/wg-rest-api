@@ -47,7 +47,6 @@ RSpec.describe Api::Clients::Serializer do
         dns: '1.1.1.1',
         persistent_keepalive: 0,
         endpoint: '2.2.2.2:51820',
-        last_ip: '109.252.46.192',
         last_online: '2024-10-15 19:34:41 +0000',
         traffic: {
           received: 59_013_857,
@@ -115,7 +114,6 @@ RSpec.describe Api::Clients::Serializer do
           dns: '1.1.1.1',
           persistent_keepalive: 0,
           endpoint: '2.2.2.2:51820',
-          last_ip: '109.252.46.192',
           last_online: '2024-10-15 19:34:41 +0000',
           traffic: {
             received: 59_013_857,
@@ -136,7 +134,6 @@ RSpec.describe Api::Clients::Serializer do
           dns: '1.1.1.1',
           persistent_keepalive: 0,
           endpoint: '2.2.2.2:51820',
-          last_ip: '217.66.152.172',
           last_online: '2024-10-15 18:34:41 +0000',
           traffic: {
             received: 208_970_711,
@@ -157,7 +154,6 @@ RSpec.describe Api::Clients::Serializer do
           dns: '1.1.1.1',
           persistent_keepalive: 0,
           endpoint: '2.2.2.2:51820',
-          last_ip: '212.13.11.203',
           last_online: '2024-10-09 23:58:47 +0000',
           traffic: {
             received: 65_473_085,
@@ -170,6 +166,23 @@ RSpec.describe Api::Clients::Serializer do
 
     it 'serializes multiple configs' do
       expect(JSON.parse(serialize)).to eq(JSON.parse(expected_result.to_json))
+    end
+  end
+
+  describe 'source addresses' do
+    subject(:serialize) { described_class.serialize(client_config, 'server_public_key') }
+
+    let(:client_config) { JSON.parse(File.read('spec/fixtures/wg0.json'))['configs']['1'] }
+
+    before do
+      allow(WireGuard::StatGenerator).to receive_messages(show: File.read('spec/fixtures/stat.txt'))
+    end
+
+    after { FileUtils.rm_rf("#{Settings.wg_path}/wg0_stat.json") }
+
+    it 'reports none, for a peer that is connected from one' do
+      expect(JSON.parse(serialize)).not_to have_key('last_ip')
+      expect(serialize).not_to include('109.252.46.192')
     end
   end
 end

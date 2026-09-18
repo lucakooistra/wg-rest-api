@@ -11,7 +11,9 @@ RSpec.describe Api::Server::Serializer do
                       'address' => '10.8.0.1',
                       'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:1' },
         'clients_count' => 3,
-        'available_clients_count' => 6,
+        # NOTE: A /29 is .0 to .7: the network, the server at .1, clients at .2
+        # to .6, and the broadcast address, which is never handed out.
+        'available_clients_count' => 5,
         'dns' => '1.1.1.1',
         'host' => '2.2.2.2',
         'allowed_ips' => '0.0.0.0/0, ::/0',

@@ -44,6 +44,7 @@ module WireGuard
 
       raise Errors::ConfigNotFoundError if result.nil?
 
+      rest_address(result)
       dump_json_config(json_config)
       dump_wireguard_config
     end
@@ -143,7 +144,15 @@ module WireGuard
     end
 
     def build_new_config(configs, params)
-      ClientConfigBuilder.new(configs, params).config
+      resting = AddressRest.new(json_config['released']).addresses
+
+      ClientConfigBuilder.new(configs, params, resting:).config
+    end
+
+    def rest_address(config)
+      return unless config.is_a?(Hash) && config['address']
+
+      json_config['released'] = AddressRest.new(json_config['released']).rest(config['address'])
     end
 
     def merge_config(updated_config, config_params)

@@ -3,8 +3,10 @@ name: Ruby CI
 on:
   push:
     branches: [ "master" ]
+  # Every pull request, whatever its base. This fork's work lands on its own
+  # branches (client-supplied-public-key, peer-teardown-and-retention), never
+  # on master, so upstream's filter meant its PRs were never checked at all.
   pull_request:
-    branches: [ "master", "development" ]
 
 jobs:
   rubocop:

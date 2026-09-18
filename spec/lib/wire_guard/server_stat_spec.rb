@@ -21,7 +21,6 @@ RSpec.describe WireGuard::ServerStat do
       let(:expected_result) do
         {
           'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {
-            last_ip: '109.252.46.192',
             last_online: '2024-10-09 21:49:40 +0000',
             traffic: {
               received: 59_013_857,
@@ -29,7 +28,6 @@ RSpec.describe WireGuard::ServerStat do
             }
           },
           'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {
-            last_ip: '217.66.152.172',
             last_online: '2024-10-09 23:59:30 +0000',
             traffic: {
               received: 208_970_711,
@@ -37,7 +35,6 @@ RSpec.describe WireGuard::ServerStat do
             }
           },
           'bPKBg66uC1J2hlkE31Of5wnkg+IjowVXgoLcjcLn0js=' => {
-            last_ip: '212.13.11.203',
             last_online: '2024-10-09 23:58:47 +0000',
             traffic: {
               received: 65_473_085,
@@ -68,7 +65,6 @@ RSpec.describe WireGuard::ServerStat do
       let(:expected_result) do
         {
           'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {
-            last_ip: '109.252.46.192',
             last_online: '2024-10-09 21:49:40 +0000',
             traffic: {
               received: 59_013_857,
@@ -76,7 +72,6 @@ RSpec.describe WireGuard::ServerStat do
             }
           },
           'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {
-            last_ip: '217.66.152.172',
             last_online: '2024-10-09 23:59:30 +0000',
             traffic: {
               received: 208_970_711,
@@ -84,7 +79,6 @@ RSpec.describe WireGuard::ServerStat do
             }
           },
           'bPKBg66uC1J2hlkE31Of5wnkg+IjowVXgoLcjcLn0js=' => {
-            last_ip: '212.13.11.203',
             last_online: '2024-10-09 23:58:47 +0000',
             traffic: {
               received: 65_473_085,
@@ -113,14 +107,9 @@ RSpec.describe WireGuard::ServerStat do
       context 'when there is no file with statistics' do
         let(:expected_result) do
           {
-            'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {
-              last_ip: '109.252.46.192'
-            },
-            'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {
-              last_ip: '217.66.152.172'
-            },
+            'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {},
+            'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {},
             'bPKBg66uC1J2hlkE31Of5wnkg+IjowVXgoLcjcLn0js=' => {
-              last_ip: '212.13.11.203',
               last_online: '2024-10-09 23:58:47 +0000',
               traffic: {
                 received: 65_473_085,
@@ -151,7 +140,6 @@ RSpec.describe WireGuard::ServerStat do
         let(:expected_result) do
           {
             'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {
-              'last_ip' => '109.252.46.192',
               'last_online' => '2024-10-15 19:34:41 +0000',
               'traffic' => {
                 'received' => 59_013_857,
@@ -159,7 +147,6 @@ RSpec.describe WireGuard::ServerStat do
               }
             },
             'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {
-              'last_ip' => '217.66.152.172',
               'last_online' => '2024-10-15 18:34:41 +0000',
               'traffic' => {
                 'received' => 208_970_711,
@@ -167,7 +154,6 @@ RSpec.describe WireGuard::ServerStat do
               }
             },
             'bPKBg66uC1J2hlkE31Of5wnkg+IjowVXgoLcjcLn0js=' => {
-              last_ip: '212.13.11.203',
               last_online: '2024-10-09 23:58:47 +0000',
               traffic: {
                 received: 65_473_085,
@@ -200,7 +186,6 @@ RSpec.describe WireGuard::ServerStat do
         let(:expected_result) do
           {
             'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {
-              last_ip: '109.252.46.192',
               last_online: '2024-10-09 21:49:40 +0000',
               traffic: {
                 received: 59_013_857,
@@ -208,7 +193,6 @@ RSpec.describe WireGuard::ServerStat do
               }
             },
             'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {
-              last_ip: '217.66.152.172',
               last_online: '2024-10-09 23:59:30 +0000',
               traffic: {
                 received: 208_970_711,
@@ -216,7 +200,6 @@ RSpec.describe WireGuard::ServerStat do
               }
             },
             'bPKBg66uC1J2hlkE31Of5wnkg+IjowVXgoLcjcLn0js=' => {
-              last_ip: '212.13.11.203',
               last_online: '2024-10-09 23:58:47 +0000',
               traffic: {
                 received: 65_473_085,
@@ -245,18 +228,14 @@ RSpec.describe WireGuard::ServerStat do
         let(:expected_result) do
           {
             'LiXk4UOfnScgf4UnkcYNcz4wWeqTOW1UrHKRVhZ1OXg=' => {
-              'last_ip' => '137.244.47.77',
               'last_online' => '2024-10-15 19:34:41 +0000',
               'traffic' => {
                 'received' => 59_013_857,
                 'sent' => 1_449_551_462
               }
             },
-            'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {
-              last_ip: '217.66.152.172'
-            },
+            'hvIyIW2o8JROVKuY2yYFdUn0oA+43aLuT8KCy0YbORE=' => {},
             'bPKBg66uC1J2hlkE31Of5wnkg+IjowVXgoLcjcLn0js=' => {
-              last_ip: '212.13.11.203',
               last_online: '2024-10-09 23:58:47 +0000',
               traffic: {
                 received: 65_473_085,
@@ -289,7 +268,6 @@ RSpec.describe WireGuard::ServerStat do
 
       let(:expected_result) do
         {
-          last_ip: '217.66.152.172',
           last_online: '2024-10-09 23:59:30 +0000',
           traffic: {
             received: 208_970_711,
@@ -308,6 +286,43 @@ RSpec.describe WireGuard::ServerStat do
 
       it 'returns nil' do
         expect(show).to be_nil
+      end
+    end
+  end
+
+  describe 'source addresses' do
+    let(:source_addresses) { %w[109.252.46.192 217.66.152.172 212.13.11.203 137.244.47.77 137.244.47.78] }
+
+    # NOTE: stat.txt is `wg show` for three connected peers, each with an
+    # endpoint — the user's public IP.
+    it 'keeps none for a peer that connects' do
+      described_class.new
+
+      expect(File.read(wg_stat_path)).not_to include(*source_addresses)
+    end
+
+    context 'when an earlier version wrote them' do
+      # NOTE: No live peers at all, so nothing in the file is overwritten by
+      # new data. This is the accumulated case: records whose peers are long
+      # gone, which the merge in #aggregate_data never visits.
+      let(:wg_show_stub) { '' }
+
+      before do
+        create_conf_file('spec/fixtures/wg0_stat.json', wg_stat_path)
+      end
+
+      it 'drops every one of them on the next write' do
+        described_class.new
+
+        written = File.read(wg_stat_path)
+
+        expect(written).not_to include('last_ip', *source_addresses)
+      end
+
+      it 'keeps what is not a source address' do
+        described_class.new
+
+        expect(JSON.parse(File.read(wg_stat_path)).values).to all(include('last_online', 'traffic'))
       end
     end
   end
