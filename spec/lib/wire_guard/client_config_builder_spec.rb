@@ -261,4 +261,55 @@ RSpec.describe WireGuard::ClientConfigBuilder do
       expect(build).to eq(expected_result)
     end
   end
+
+  context 'when an address was released too recently to reissue' do
+    subject(:build) { described_class.new(configs, params, resting: ['10.8.0.3']).config }
+
+    let(:configs) do
+      {
+        'last_id' => 3,
+        '1' => { 'address' => '10.8.0.2', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:2' },
+        '3' => { 'address' => '10.8.0.4', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:4' }
+      }
+    end
+
+    it 'skips it, rather than handing it to the next session' do
+      expect(build).to include(address: '10.8.0.5', address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:5')
+    end
+  end
+
+  context 'when the only free addresses are resting' do
+    subject(:build) { described_class.new(configs, params, resting: ['10.8.0.6']).config }
+
+    let(:configs) do
+      {
+        'last_id' => 4,
+        '1' => { 'address' => '10.8.0.2', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:2' },
+        '2' => { 'address' => '10.8.0.3', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:3' },
+        '3' => { 'address' => '10.8.0.4', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:4' },
+        '4' => { 'address' => '10.8.0.5', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:5' }
+      }
+    end
+
+    # NOTE: The test pool is a /29. With .2 to .5 held and .6 resting, the one
+    # address left is .7 — the broadcast address, which upstream would issue.
+    it 'refuses, rather than reaching for the broadcast address' do
+      expect { build }.to raise_error(Errors::ConnectionLimitExceededError)
+    end
+  end
+
+  context 'when a peer holds different positions in the two pools' do
+    let(:configs) do
+      {
+        'last_id' => 1,
+        '1' => { 'address' => '10.8.0.2', 'address_ipv6' => 'fdcc:ad94:bacf:61a4::cafe:3' }
+      }
+    end
+
+    # NOTE: Each position maps to one block of outbound ports on the node. A
+    # peer split across two positions would leave through two blocks.
+    it 'gives the new peer one position, free in both' do
+      expect(build).to include(address: '10.8.0.4', address_ipv6: 'fdcc:ad94:bacf:61a4::cafe:4')
+    end
+  end
 end

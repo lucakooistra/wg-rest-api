@@ -234,7 +234,10 @@ RSpec.describe Api::Clients::Controller do
   describe '#destroy' do
     before do
       create_conf_file('spec/fixtures/wg0.json')
+      Timecop.freeze(Time.utc(2026, 9, 18, 12))
     end
+
+    after { Timecop.return }
 
     context 'when the necessary config is available' do
       let(:expected_result) do
@@ -271,6 +274,9 @@ RSpec.describe Api::Clients::Controller do
                 key: 'value'
               }
             }
+          },
+          released: {
+            '10.8.0.3' => Time.utc(2026, 9, 18, 12).to_i
           }
         }
       end
