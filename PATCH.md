@@ -1,8 +1,13 @@
 # What this fork changes
 
-A fork of [`leonovk/wg-rest-api`](https://github.com/leonovk/wg-rest-api) with one behavioural
-change: **the client supplies its own public key, and the server never generates or stores a private
-key for it.**
+A fork of [`leonovk/wg-rest-api`](https://github.com/leonovk/wg-rest-api) with two behavioural
+changes:
+
+1. **The client supplies its own public key, and the server never generates or stores a private key
+   for it.** Branch `client-supplied-public-key`; everything up to "What is not changed" below.
+2. **The server keeps no record of where a peer connects from, and does not reissue a released
+   address straight away.** Branch `peer-teardown-and-retention`, built on the first; see
+   [the second change](#the-second-change-no-source-addresses-and-resting-addresses) at the end.
 
 Upstream generates the keypair server-side at create time and returns the private key in the HTTP
 response. That inverts WireGuard's trust model — a key that should only ever exist on the client is
@@ -239,3 +244,78 @@ The practical consequence: **this fork should be planned as permanent.** Keep th
 the suite green, and expect to rebase rather than to retire it. Offering the optional-key variant
 upstream separately remains worthwhile — it would benefit other people with the same requirement —
 but it would be new work, not a submission of this branch.
+
+---
+
+## The second change: no source addresses, and resting addresses
+
+Made for StekVPN's `peer-teardown-and-retention` change, which has the full reasoning. In short: a VPN
+node that keeps its users' home IP addresses should keep them in exactly one place, for a stated
+period, and upstream keeps one per peer in `wg0_stat.json` forever.
+
+### 1. `last_ip` is gone — from the stats file and from the API
+
+`lib/wire_guard/stat_parser.rb` no longer reads the `endpoint:` line of `wg show`. That line is the
+peer's public address, and it was stored as `last_ip`.
+
+Upstream's merge in `ServerStat#aggregate_data` iterates the *live* peers and writes into the
+*stored* hash, so a peer absent from `wg show` is never visited and its entry is never removed. A
+node that had deleted every peer still held a source address for each of them, the oldest six months
+old. Not recording the field ends that; `ServerStat#initialize_last_stat_data` also drops `last_ip`
+from every entry it reads, so a file written by an earlier version is scrubbed on the next request
+rather than needing a migration.
+
+`last_online` and `traffic` stay. They say when and how much, not from where.
+
+`GET /api/clients` and `GET /api/clients/:id` no longer carry `last_ip`. **Breaking for any caller
+that reads it.**
+
+A node that needs to know who held an address when is expected to record that deliberately, with its
+own retention — StekVPN does, outside this service.
+
+### 2. One position in both pools, and never the broadcast address
+
+`lib/wire_guard/client_config_builder.rb` picks one offset and uses it for both the IPv4 and the IPv6
+address. Upstream allocated the two independently; they agreed only as long as nothing had gone
+wrong. StekVPN maps each position to a fixed block of outbound source ports, so a peer split across
+two positions would leave through two blocks.
+
+It also stops one short of the end of the pool. Upstream counted the broadcast address as usable, so
+a full `/24` handed out `10.8.0.255`. `available_clients_count` in `GET /api/server` changes to match:
+61 for a `/26`, not 62.
+
+### 3. A released address rests before it is reissued
+
+`lib/wire_guard/address_rest.rb` is new. `Server#delete_config` records the address a deleted peer
+held and when, under `released` in `wg0.json`, and allocation skips any address released less than
+`WG_ADDRESS_REST_PERIOD` seconds ago (default `600`). Entries are dropped once their rest is over.
+
+Closed connections linger in connection tracking for minutes after a session ends, and a complaint
+names a time to the minute at best. An address reissued at once puts two sessions inside one
+complaint's margin of error.
+
+A pool whose free addresses are all resting refuses with `ConnectionLimitExceededError`, as a full
+one does.
+
+### Files
+
+| File | Change |
+|---|---|
+| `lib/wire_guard/stat_parser.rb` | `endpoint:` no longer parsed |
+| `lib/wire_guard/server_stat.rb` | `last_ip` dropped on read |
+| `app/api/clients/serializer.rb` | `last_ip` removed from the response |
+| `lib/wire_guard/client_config_builder.rb` | allocation by offset; broadcast excluded; resting skipped |
+| `lib/wire_guard/server.rb` | records a release; passes resting addresses to the builder |
+| `lib/wire_guard/address_rest.rb` | new |
+| `config/settings/*.yaml` | `address_rest_period` |
+| `swagger/swagger.yaml` | `last_ip` removed |
+
+`rspec`: **158 examples, 0 failures.** `rubocop`: no offences.
+
+### Upstreaming
+
+The broadcast-address fix is a plain bug fix and should go upstream on its own. The rest period is
+general enough to offer as an opt-in (`WG_ADDRESS_REST_PERIOD=0` would preserve today's behaviour).
+Removing `last_ip` is not: upstream lists "statistics for which clients are connected" as a feature,
+and an opt-out setting is the version it could take.
+
