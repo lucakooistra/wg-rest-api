@@ -34,7 +34,7 @@ module WireGuard
       end
     end
 
-    def parse_wg_line(peer_data) # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+    def parse_wg_line(peer_data)
       case peer_data.first
       when 'peer:'
         result[peer_data.last] = {}
@@ -43,9 +43,9 @@ module WireGuard
         result[@last_peer][:last_online] = build_latest_data(peer_data)
       when 'transfer:'
         result[@last_peer][:traffic] = build_traffic_data(peer_data)
-      when 'endpoint:'
-        result[@last_peer][:last_ip] = build_last_ip_data(peer_data)
       end
+      # NOTE: 'endpoint:' is deliberately not read. It is the peer's public
+      # address — a user's home or mobile IP — and nothing kept here expires.
     end
 
     def build_latest_data(data)
@@ -60,11 +60,6 @@ module WireGuard
         sent: data[-3..-2]&.join(' ')&.to_unit&.base_scalar.to_i
         # rubocop:enable Style/SafeNavigationChainLength
       }
-    end
-
-    def build_last_ip_data(data)
-      endpoint = data.last
-      endpoint.split(':').first
     end
 
     def parse_time_ago(time_string)
